@@ -52,13 +52,13 @@ def train():
             with tf.GradientTape() as tape:
                 pred = model(x)
                 # Compute reconstruction loss
-                loss = loss_fn(y, pred)
-                loss += sum(model.losses)  # Add KLD regularization loss
+                loss_batch = loss_fn(y, pred)
+                loss_batch += sum(model.losses)  # Add KLD regularization loss
 
-            grads = tape.gradient(loss, model.trainable_weights)
+            grads = tape.gradient(loss_batch, model.trainable_weights)
             optimizer.apply_gradients(zip(grads, model.trainable_weights))
 
-            metric(loss)
+            metric(loss_batch)
 
             if iter % 100 == 0:
                 print("iter %d: mean loss = %.4f" % (iter, metric.result()))
@@ -67,7 +67,6 @@ def train():
 
 def main():
     train()
-    print(tf.__version__)
 
 
 
